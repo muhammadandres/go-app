@@ -3,7 +3,7 @@ name: Deploy Go Application
 on:
   push:
     branches:
-      - deploy-to-ec2
+      - master
 
 jobs:
   build:
@@ -11,14 +11,19 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
+
       - name: Create .env file
         run: echo "PORT=${{ secrets.PORT }}" >> .env
+
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
       - name: Build docker image
         run: docker build -t muhammadandres/manajemen_tugas .
+
       - name: Push image to docker hub
         run: docker push muhammadandres/manajemen_tugas:latest
+
   deploy:
     needs: build
     runs-on: self-hosted
