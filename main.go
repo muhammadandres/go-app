@@ -6,14 +6,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gofor-little/env"
 	"github.com/integrationninjas/go-app/handlers"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// load .env file
-	// godotenv package
-	port := goDotEnvVariable("PORT")
+	LoadEnv()
 
 	// Initialize logging
 	log.SetOutput(os.Stdout)
@@ -23,21 +21,15 @@ func main() {
 	http.HandleFunc("/", handlers.HelloHandler)
 	http.HandleFunc("/items", handlers.ItemsHandler)
 	http.HandleFunc("/randomuser", handlers.GetRandomUser)
-
-	fmt.Printf("Server listening on port %s", port)
+	port := os.Getenv("PORT")
+	fmt.Println(port)
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
 
 // use godot package to load/read the .env file and
 // return the value of the key
-func goDotEnvVariable(key string) string {
-
-	// load .env file
-	err := env.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
+func LoadEnv() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error in loading .env file: ", err)
 	}
-
-	return os.Getenv(key)
 }
