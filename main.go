@@ -14,9 +14,6 @@ func main() {
 	// load .env file
 	// godotenv package
 	port := goDotEnvVariable("PORT")
-	if port == "" {
-		port = "8080" // Default port
-	}
 
 	// Initialize logging
 	log.SetOutput(os.Stdout)
@@ -27,8 +24,8 @@ func main() {
 	http.HandleFunc("/items", handlers.ItemsHandler)
 	http.HandleFunc("/randomuser", handlers.GetRandomUser)
 
-	fmt.Println("Server listening on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	fmt.Printf("Server listening on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
 
 // use godot package to load/read the .env file and
